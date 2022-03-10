@@ -19,8 +19,11 @@
         <Menu Grid.Row="0" Grid.ColumnSpan="2" DockPanel.Dock="Top">
             <MenuItem Header="File"  >
                 <MenuItem Header="Open" Click="OnOpenItemMenuClick"></MenuItem>
-                <MenuItem Header="Exit"></MenuItem>
+                <MenuItem Header="Exit" Click="OnExitItemMenuClick"></MenuItem>
             </MenuItem>
         </Menu>
+
+        <TreeView Height="auto" Name="directoryTree" Grid.Row="1" Grid.Column="0"></TreeView>
+        <TextBox Grid.Row="1" Grid.Column="1"></TextBox>
     </Grid>
 </Window>
