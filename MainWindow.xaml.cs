@@ -36,7 +36,7 @@ namespace PlatformyTechnologiczne
 
         private void LoadTreeView(FolderBrowserDialog dialog)
         {
-            System.Windows.Controls.TreeView tree = (System.Windows.Controls.TreeView)this.FindName("directoryTree");
+            System.Windows.Controls.TreeView tree = (System.Windows.Controls.TreeView)this.FindName("DirectoryTree");
             string rootDirectory = dialog.SelectedPath;
             string root = Path.GetFileName(rootDirectory);
 
@@ -67,12 +67,7 @@ namespace PlatformyTechnologiczne
                 string fileName = Path.GetFileName(files[i]);
                 string directoryPath = files[i];
 
-                TreeViewItem item = new TreeViewItem
-                {
-                    Header = fileName,
-                    Tag = directoryPath
-                };
-
+                TreeViewItem item = CreateFileTreeViewItem(fileName, directoryPath);
                 rootItem.Items.Add(item);
             }
 
@@ -108,16 +103,72 @@ namespace PlatformyTechnologiczne
                 string fileName = Path.GetFileName(files[i]);
                 string directoryPath = files[i];
 
-                TreeViewItem item = new TreeViewItem
-                {
-                    Header = fileName,
-                    Tag = directoryPath
-                };
+                TreeViewItem item = CreateFileTreeViewItem(fileName, directoryPath);
 
                 parent.Items.Add(item);
             }
+        }
 
+        private TreeViewItem CreateFileTreeViewItem(string fileName, string filepath)
+        {
+            TreeViewItem item = new TreeViewItem
+            {
+                Header = fileName,
+                Tag = filepath,
+                
+            };
 
+            item.ContextMenu = CreateContextMenu(filepath);
+            return item;
+        }
+
+        private ContextMenu CreateContextMenu(string filePath)
+        {
+            ContextMenu menu = new ContextMenu();
+            MenuItem readItem = CreateReadMenuFileItem(filePath);
+            menu.Items.Add(readItem);
+
+            MenuItem delteItem = CreateDeleteMenuFileItem(filePath);
+            menu.Items.Add(delteItem);
+
+            return menu;
+        }
+
+        private MenuItem CreateDeleteMenuFileItem(string filePath)
+        {
+            MenuItem item = new MenuItem { Header = "Delete file", Tag = filePath };
+            item.Click += OnDeleteFileMenuItemClick;
+            return item;
+        }
+
+        private void OnDeleteFileMenuItemClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuItem item) return;
+            string path = (string) item.Tag;
+            File.Delete(path);
+        }
+
+        private MenuItem CreateReadMenuFileItem(string filePath)
+        {
+            var menuItemResult = new MenuItem { Header = "Read File", Tag = filePath };
+            menuItemResult.Click += OnRouteMenuEventClick;
+            return menuItemResult;
+        }
+
+        private void OnRouteMenuEventClick(object sender,EventArgs args)
+        {
+            if (sender is not MenuItem item) return;
+
+            string filePath = (string)item.Tag;
+
+            System.Windows.Controls.TextBox box = (System.Windows.Controls.TextBox)this.FindName("FileTextBox");
+            box.Text = ""; // reset
+
+            using (var textReader = File.OpenText(filePath))
+            {
+                string text = textReader.ReadToEnd();
+                box.Text = text;
+            }
         }
     }
 }

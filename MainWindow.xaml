@@ -23,7 +23,10 @@
             </MenuItem>
         </Menu>
 
-        <TreeView Height="auto" Name="directoryTree" Grid.Row="1" Grid.Column="0"></TreeView>
-        <TextBox Grid.Row="1" Grid.Column="1"></TextBox>
+        <TreeView Height="auto" Name="DirectoryTree" Grid.Row="1" Grid.Column="0"></TreeView>
+        <ScrollViewer Grid.Row="1" Grid.Column="1">
+            <TextBox Name="FileTextBox" ></TextBox>
+        </ScrollViewer>
+        
     </Grid>
 </Window>
