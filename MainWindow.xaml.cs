@@ -31,6 +31,10 @@ namespace PlatformyTechnologiczne
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        private readonly string treeDirectoryName = "DirectoryTree";
+        private readonly string textBlockName = "FileTextBox";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -50,13 +54,14 @@ namespace PlatformyTechnologiczne
 
         private void LoadTreeView(FolderBrowserDialog dialog)
         {
-            System.Windows.Controls.TreeView tree = (System.Windows.Controls.TreeView)this.FindName("DirectoryTree");
+            System.Windows.Controls.TreeView tree = (System.Windows.Controls.TreeView) FindName(treeDirectoryName);
+            tree.Items.Clear();
             tree.UpdateLayout();
 
             string rootDirectory = dialog.SelectedPath;
             string root = Path.GetFileName(rootDirectory);
 
-            TreeViewItem rootItem = new TreeViewItem { Header = root, Tag = rootDirectory };
+            TreeViewItem rootItem = CreateDirectoryTreeViewItem(root, rootDirectory, tree.Items);
             tree.Items.Add(rootItem);
 
             string[] directories = Directory.GetDirectories(rootDirectory);
@@ -73,9 +78,8 @@ namespace PlatformyTechnologiczne
                     Tag = directoryPath
                 };
 
-                
 
-                rootItem.Items.Add(item);
+                rootItem.Items.Add(CreateDirectoryTreeViewItem(directoryName, directoryPath, rootItem.Items));
                 LoadFiles(item, directoryPath);
             }
 
@@ -112,7 +116,7 @@ namespace PlatformyTechnologiczne
                     Tag = directoryPath
                 };
 
-                parent.Items.Add(item);
+                parent.Items.Add(CreateDirectoryTreeViewItem(directoryName,directoryPath,parent.Items));
                 LoadFiles(item, directoryPath);
             }
 
@@ -127,6 +131,57 @@ namespace PlatformyTechnologiczne
             }
         }
 
+        private TreeViewItem CreateDirectoryTreeViewItem(string name, string path, ItemCollection items)
+        {
+            TreeViewItem treeItem = new TreeViewItem
+            {
+                Header = name,
+                Tag = path
+            };
+
+            ContextMenu menu = new ContextMenu();
+
+            MenuItem createFolderFileMenuItem = new MenuItem { Header = "Create", Tag = new MenuItemMetaInfo(items, treeItem) };
+            createFolderFileMenuItem.Click += OnDirectoryCreateFolderFileClick;
+
+            MenuItem menuItemDelete = new MenuItem { Header = "Delete", Tag = new MenuItemMetaInfo(items,treeItem) };
+            menuItemDelete.Click += OnDirectoryDeleteMenuItemClick;
+
+            menu.Items.Add(createFolderFileMenuItem);
+            menu.Items.Add(menuItemDelete);
+
+            treeItem.ContextMenu = menu;
+
+            return treeItem;
+
+        }
+
+        private void OnDirectoryCreateFolderFileClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuItem item) return;
+            MenuItemMetaInfo meta = (MenuItemMetaInfo)item.Tag;
+
+            //TODO show creation folder window
+            System.Windows.MessageBox.Show("Create Dialog should be here!");
+            
+            System.Windows.Controls.TreeView tree = (System.Windows.Controls.TreeView) FindName(treeDirectoryName);
+            tree.UpdateLayout();
+
+        }
+
+        private void OnDirectoryDeleteMenuItemClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is not MenuItem item) return;
+            MenuItemMetaInfo meta = (MenuItemMetaInfo)item.Tag;
+            string filePath = (string)meta.TreeItem.Tag;
+            Directory.Delete(filePath);
+
+            meta.ParentCollection.Remove(meta.TreeItem);
+
+            System.Windows.Controls.TreeView tree = (System.Windows.Controls.TreeView) FindName(treeDirectoryName);
+            tree.UpdateLayout();
+        }
+
         private TreeViewItem CreateFileTreeViewItem(string name, string path, ItemCollection items)
         {
             TreeViewItem treeItem = new TreeViewItem
@@ -137,14 +192,14 @@ namespace PlatformyTechnologiczne
 
             ContextMenu menu = new ContextMenu();
             
-            var menuItemResult = new MenuItem { Header = "Read", Tag = new MenuItemMetaInfo(items,treeItem) };
-            menuItemResult.Click += OnRouteMenuEventClick;
+            MenuItem menuItemRead = new MenuItem { Header = "Read", Tag = new MenuItemMetaInfo(items,treeItem) };
+            menuItemRead.Click += OnRouteMenuEventClick;
 
 
             MenuItem deleteItemMenu = new MenuItem { Header = "Delete", Tag = new MenuItemMetaInfo(items,treeItem) };
             deleteItemMenu.Click += OnDeleteFileMenuItemClick;
 
-            menu.Items.Add(menuItemResult);
+            menu.Items.Add(menuItemRead);
             menu.Items.Add(deleteItemMenu);
 
             treeItem.ContextMenu = menu;
@@ -161,7 +216,7 @@ namespace PlatformyTechnologiczne
 
             meta.ParentCollection.Remove(meta.TreeItem);
 
-            System.Windows.Controls.TreeView tree = (System.Windows.Controls.TreeView)this.FindName("DirectoryTree");
+            System.Windows.Controls.TreeView tree = (System.Windows.Controls.TreeView) FindName(treeDirectoryName);
             tree.UpdateLayout();
         }
 
@@ -173,7 +228,7 @@ namespace PlatformyTechnologiczne
             MenuItemMetaInfo meta = (MenuItemMetaInfo) item.Tag;
             string filePath = (string) meta.TreeItem.Tag;
 
-            System.Windows.Controls.TextBox box = (System.Windows.Controls.TextBox)this.FindName("FileTextBox");
+            System.Windows.Controls.TextBox box = (System.Windows.Controls.TextBox) FindName(textBlockName);
             box.Text = ""; // reset
 
             using (var textReader = File.OpenText(filePath))
@@ -182,6 +237,8 @@ namespace PlatformyTechnologiczne
                 box.Text = text;
             }
         }
+
+        
 
     }
 }
