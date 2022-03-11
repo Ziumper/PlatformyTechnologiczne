@@ -154,7 +154,10 @@ namespace PlatformyTechnologiczne
             if (sender is not TreeViewItem item) return;
             PropertiesTextBlock.Text = ""; // reset
             string filePath = (string) item.Tag;
-            PropertiesTextBlock.Text = File.GetAttributes(filePath).ToString();
+
+            string property  = File.GetAttributes(filePath).ToString();
+            PropertiesTextBlock.Text = property;
+            e.Handled = true;
         }
 
         private void OnDirectoryCreateFolderFileClick(object sender, RoutedEventArgs e)
