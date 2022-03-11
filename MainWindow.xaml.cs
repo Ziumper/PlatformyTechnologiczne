@@ -38,6 +38,7 @@ namespace PlatformyTechnologiczne
         public MainWindow()
         {
             InitializeComponent();
+            
         }
 
         private void OnExitItemMenuClick(object sender, RoutedEventArgs e)
@@ -72,14 +73,8 @@ namespace PlatformyTechnologiczne
                 string directoryName = Path.GetFileName(directories[i]);
                 string directoryPath = directories[i];
 
-                TreeViewItem item = new TreeViewItem
-                {
-                    Header = directoryName,
-                    Tag = directoryPath
-                };
-
-
-                rootItem.Items.Add(CreateDirectoryTreeViewItem(directoryName, directoryPath, rootItem.Items));
+                TreeViewItem item = CreateDirectoryTreeViewItem(directoryName, directoryPath, rootItem.Items);
+                rootItem.Items.Add(item);
                 LoadFiles(item, directoryPath);
             }
 
@@ -110,13 +105,9 @@ namespace PlatformyTechnologiczne
                 string directoryName = Path.GetFileName(directories[i]);
                 string directoryPath = directories[i];
 
-                TreeViewItem item = new TreeViewItem
-                {
-                    Header = directoryName,
-                    Tag = directoryPath
-                };
+                TreeViewItem item = CreateDirectoryTreeViewItem(directoryName, directoryPath, parent.Items);
 
-                parent.Items.Add(CreateDirectoryTreeViewItem(directoryName,directoryPath,parent.Items));
+                parent.Items.Add(item);
                 LoadFiles(item, directoryPath);
             }
 
@@ -139,6 +130,8 @@ namespace PlatformyTechnologiczne
                 Tag = path
             };
 
+            treeItem.Selected += OnSelectedTreeItem;
+
             ContextMenu menu = new ContextMenu();
 
             MenuItem createFolderFileMenuItem = new MenuItem { Header = "Create", Tag = new MenuItemMetaInfo(items, treeItem) };
@@ -154,6 +147,14 @@ namespace PlatformyTechnologiczne
 
             return treeItem;
 
+        }
+
+        private void OnSelectedTreeItem(object sender, RoutedEventArgs e)
+        {
+            if (sender is not TreeViewItem item) return;
+            PropertiesTextBlock.Text = ""; // reset
+            string filePath = (string) item.Tag;
+            PropertiesTextBlock.Text = File.GetAttributes(filePath).ToString();
         }
 
         private void OnDirectoryCreateFolderFileClick(object sender, RoutedEventArgs e)
@@ -187,12 +188,59 @@ namespace PlatformyTechnologiczne
 
         private void CreateFile(MenuItemMetaInfo meta, CreateDialog dialog)
         {
-            throw new NotImplementedException();   
+            string currentDirectoryPath = (string)meta.TreeItem.Tag;
+            if (!Directory.Exists(currentDirectoryPath)) return;
+
+            string fileName = dialog.FileName.Text;
+            string pathToFile = currentDirectoryPath + Path.DirectorySeparatorChar + fileName;
+
+            if (File.Exists(pathToFile)) return;
+            File.Create(pathToFile);
+            SetFileAttributes(pathToFile, dialog);
+
+            TreeViewItem item = CreateFileTreeViewItem(fileName, pathToFile, meta.TreeItem.Items);
+            meta.TreeItem.Items.Add(item);
         }
+
 
         private void CreateDirectory(MenuItemMetaInfo meta, CreateDialog dialog)
         {
-            throw new NotImplementedException();
+            string currentDirectoryPath = (string) meta.TreeItem.Tag;
+
+            if (!Directory.Exists(currentDirectoryPath)) return;
+
+            string folderName = dialog.FileName.Text;
+            string newDirectoryPath = currentDirectoryPath + Path.DirectorySeparatorChar + folderName;
+
+            Directory.CreateDirectory(newDirectoryPath);
+            SetFileAttributes(newDirectoryPath, dialog);
+
+            TreeViewItem item = CreateDirectoryTreeViewItem(folderName, newDirectoryPath, meta.TreeItem.Items);
+            meta.TreeItem.Items.Add(item);
+        }
+
+
+        private void SetFileAttributes(string pathToFile, CreateDialog dialog)
+        {
+            if (dialog.ReadOnlyCheckbox.IsChecked != null ? (bool)dialog.ReadOnlyCheckbox.IsChecked : false)
+            {
+                File.SetAttributes(pathToFile, FileAttributes.ReadOnly);
+            }
+
+            if (dialog.ArchiveCheckbox.IsChecked != null ? (bool)dialog.ArchiveCheckbox.IsChecked : false)
+            {
+                File.SetAttributes(pathToFile, FileAttributes.Archive);
+            }
+           
+            if (dialog.HiddenCheckbox.IsChecked != null ? (bool)dialog.HiddenCheckbox.IsChecked : false)
+            {
+                File.SetAttributes(pathToFile, FileAttributes.Hidden);
+            }
+           
+            if (dialog.SystemCheckbox.IsChecked != null ? (bool)dialog.SystemCheckbox.IsChecked : false)
+            {
+                File.SetAttributes(pathToFile, FileAttributes.System);
+            }
         }
 
         private void OnDirectoryDeleteMenuItemClick(object sender, RoutedEventArgs e)
@@ -215,6 +263,9 @@ namespace PlatformyTechnologiczne
                 Header = name,
                 Tag = path
             };
+
+
+            treeItem.Selected += OnSelectedTreeItem;
 
             ContextMenu menu = new ContextMenu();
             
