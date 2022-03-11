@@ -162,7 +162,8 @@ namespace PlatformyTechnologiczne
             MenuItemMetaInfo meta = (MenuItemMetaInfo)item.Tag;
 
             //TODO show creation folder window
-            System.Windows.MessageBox.Show("Create Dialog should be here!");
+            CreateDialog createDialog = new CreateDialog();
+            createDialog.ShowDialog();
             
             System.Windows.Controls.TreeView tree = (System.Windows.Controls.TreeView) FindName(treeDirectoryName);
             tree.UpdateLayout();
