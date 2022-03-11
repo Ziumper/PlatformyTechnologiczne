@@ -19,6 +19,8 @@ namespace PlatformyTechnologiczne
     /// </summary>
     public partial class CreateDialog : Window
     {
+        public bool Cancel { get; set; }
+
         public CreateDialog()
         {
             InitializeComponent();
@@ -26,7 +28,14 @@ namespace PlatformyTechnologiczne
 
         private void OnOkButtonClick(object sender, RoutedEventArgs e)
         {
+            Cancel = false;
+            Close();
+        }
 
+        private void OnCancelButtonClick(object sender, RoutedEventArgs e)
+        {
+            Cancel = true;
+            Close();
         }
     }
 }

@@ -160,14 +160,39 @@ namespace PlatformyTechnologiczne
         {
             if (sender is not MenuItem item) return;
             MenuItemMetaInfo meta = (MenuItemMetaInfo)item.Tag;
-
-            //TODO show creation folder window
-            CreateDialog createDialog = new CreateDialog();
-            createDialog.ShowDialog();
-            
+            CreateDirectoryOrFile(meta);
             System.Windows.Controls.TreeView tree = (System.Windows.Controls.TreeView) FindName(treeDirectoryName);
             tree.UpdateLayout();
+        }
 
+        private void CreateDirectoryOrFile(MenuItemMetaInfo meta)
+        {
+            CreateDialog dialog = new CreateDialog();
+            dialog.ShowDialog();
+            
+            if (dialog.Cancel) return;
+
+            try
+            {
+                if (dialog.DirectoryType.IsChecked != null ? (bool)dialog.DirectoryType.IsChecked : false)
+                {
+                    CreateDirectory(meta, dialog);
+                } else if(dialog.FileType.IsChecked != null ? (bool) dialog.FileType.IsChecked : false) CreateFile(meta, dialog);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void CreateFile(MenuItemMetaInfo meta, CreateDialog dialog)
+        {
+            throw new NotImplementedException();   
+        }
+
+        private void CreateDirectory(MenuItemMetaInfo meta, CreateDialog dialog)
+        {
+            throw new NotImplementedException();
         }
 
         private void OnDirectoryDeleteMenuItemClick(object sender, RoutedEventArgs e)

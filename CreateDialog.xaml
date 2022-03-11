@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlatformyTechnologiczne"
         mc:Ignorable="d"
-        Title="CreateDialog" Height="206" Width="246">
+        Title="CreateDialog" Height="206" Width="332">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"></RowDefinition>
@@ -29,22 +29,22 @@
         <RadioButton Name="DirectoryType" Grid.Row="1" Height="15" Width="75" HorizontalAlignment="Left" Grid.Column="2">
             <Label Padding="0">Directory</Label>
         </RadioButton>
-        <CheckBox Name="ReadOnly" Grid.Row="2" Grid.Column="0"  HorizontalAlignment="Left" Height="16" VerticalAlignment="Center">
+        <CheckBox Name="ReadOnlyCheckbox" Grid.Row="2" Grid.Column="0"  HorizontalAlignment="Left" Height="16" VerticalAlignment="Center">
             <Label Height="15" Padding="0">Read only</Label>
         </CheckBox>
-        <CheckBox Name="Archive" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="16" VerticalAlignment="Center">
+        <CheckBox Name="ArchiveCheckbox" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="16" VerticalAlignment="Center">
             <Label Height="15" Padding="0">Archive</Label>
         </CheckBox>
-        <CheckBox Name="Hidden" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="16" VerticalAlignment="Center">
+        <CheckBox Name="HiddenCheckbox" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="16" VerticalAlignment="Center">
             <Label Height="15" Padding="0">Hidden</Label>
         </CheckBox>
-        <CheckBox Name="System" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="16" VerticalAlignment="Center">
+        <CheckBox Name="SystemCheckbox" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="16" VerticalAlignment="Center">
             <Label Height="15" Padding="0">System</Label>
         </CheckBox>
         <Button Grid.Row="6" Width="50"  HorizontalAlignment="Right" VerticalAlignment="Center"  Grid.Column="0" Click="OnOkButtonClick" >
             Ok
         </Button>
-        <Button Grid.Row="6" Width="60"  HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Center" Margin="5,0,0,0"   >
+        <Button Grid.Row="6" Width="60"  HorizontalAlignment="Left" Grid.Column="1" VerticalAlignment="Center" Margin="5,0,0,0" Click="OnCancelButtonClick"   >
             Cancel
         </Button>
     </Grid>
