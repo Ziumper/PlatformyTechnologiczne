@@ -36,6 +36,18 @@ namespace PlatformyTechnologiczne
             InitializeComponent();
         }
 
+        private void OnExitItemMenuClick(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void OnOpenItemMenuClick(object sender, RoutedEventArgs e)
+        {
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            DialogResult result = dialog.ShowDialog();
+            if (result.Equals(System.Windows.Forms.DialogResult.OK)) LoadTreeView(dialog);
+        }
+
         private void LoadTreeView(FolderBrowserDialog dialog)
         {
             System.Windows.Controls.TreeView tree = (System.Windows.Controls.TreeView)this.FindName("DirectoryTree");
@@ -169,19 +181,6 @@ namespace PlatformyTechnologiczne
                 string text = textReader.ReadToEnd();
                 box.Text = text;
             }
-        }
-
-
-        private void OnExitItemMenuClick(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        private void OnOpenItemMenuClick(object sender, RoutedEventArgs e)
-        {
-            FolderBrowserDialog dialog = new FolderBrowserDialog();
-            DialogResult result = dialog.ShowDialog();
-            if (result.Equals(System.Windows.Forms.DialogResult.OK)) LoadTreeView(dialog);
         }
 
     }
