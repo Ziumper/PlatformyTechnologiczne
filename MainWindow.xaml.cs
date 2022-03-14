@@ -271,15 +271,20 @@ namespace PlatformyTechnologiczne
             treeItem.Selected += OnSelectedTreeItem;
 
             ContextMenu menu = new ContextMenu();
-            
-            MenuItem menuItemRead = new MenuItem { Header = "Read", Tag = new MenuItemMetaInfo(items,treeItem) };
-            menuItemRead.Click += OnRouteMenuEventClick;
 
+            string extension = Path.GetExtension(path);
+            bool isTxt = extension == ".txt";
+
+            if(isTxt)
+            {
+                MenuItem menuItemRead = new MenuItem { Header = "Open", Tag = new MenuItemMetaInfo(items, treeItem) };
+                menuItemRead.Click += OnRouteMenuEventClick;
+                menu.Items.Add(menuItemRead);
+            }
 
             MenuItem deleteItemMenu = new MenuItem { Header = "Delete", Tag = new MenuItemMetaInfo(items,treeItem) };
             deleteItemMenu.Click += OnDeleteFileMenuItemClick;
 
-            menu.Items.Add(menuItemRead);
             menu.Items.Add(deleteItemMenu);
 
             treeItem.ContextMenu = menu;
