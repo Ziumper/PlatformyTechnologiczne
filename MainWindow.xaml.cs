@@ -155,8 +155,15 @@ namespace PlatformyTechnologiczne
             PropertiesTextBlock.Text = ""; // reset
             string filePath = (string) item.Tag;
 
-            string property  = File.GetAttributes(filePath).ToString();
-            PropertiesTextBlock.Text = property;
+            FileAttributes fileAttribute = File.GetAttributes(filePath);
+            string rash = "";
+
+            if (fileAttribute.HasFlag(FileAttributes.ReadOnly)) rash += "r";
+            if (fileAttribute.HasFlag(FileAttributes.Archive)) rash += "a";
+            if (fileAttribute.HasFlag(FileAttributes.System)) rash += "s";
+            if (fileAttribute.HasFlag(FileAttributes.Hidden)) rash += "h";
+
+            PropertiesTextBlock.Text = rash;
             e.Handled = true;
         }
 
@@ -227,22 +234,22 @@ namespace PlatformyTechnologiczne
         {
             if (dialog.ReadOnlyCheckbox.IsChecked != null ? (bool)dialog.ReadOnlyCheckbox.IsChecked : false)
             {
-                File.SetAttributes(pathToFile, FileAttributes.ReadOnly);
+                File.SetAttributes(pathToFile,File.GetAttributes(pathToFile) | FileAttributes.ReadOnly);
             }
 
             if (dialog.ArchiveCheckbox.IsChecked != null ? (bool)dialog.ArchiveCheckbox.IsChecked : false)
             {
-                File.SetAttributes(pathToFile, FileAttributes.Archive);
+                File.SetAttributes(pathToFile, File.GetAttributes(pathToFile) | FileAttributes.Archive);
             }
            
             if (dialog.HiddenCheckbox.IsChecked != null ? (bool)dialog.HiddenCheckbox.IsChecked : false)
             {
-                File.SetAttributes(pathToFile, FileAttributes.Hidden);
+                File.SetAttributes(pathToFile, File.GetAttributes(pathToFile) | FileAttributes.Hidden);
             }
            
             if (dialog.SystemCheckbox.IsChecked != null ? (bool)dialog.SystemCheckbox.IsChecked : false)
             {
-                File.SetAttributes(pathToFile, FileAttributes.System);
+                File.SetAttributes(pathToFile, File.GetAttributes(pathToFile) | FileAttributes.System);
             }
         }
 
